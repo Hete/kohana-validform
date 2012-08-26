@@ -1,3 +1,6 @@
+<div id="orphan-errors"></div>
+
+
 <div style="display: none">
     <div id="erreurtest-template" style="display: none;">
         <div class='erreurtest' style="position: relative">
@@ -13,16 +16,29 @@
     var validationErrors = <?php echo ValidForm::instance()->retreive_errors() ?>;
                             
     for(key in validationErrors) {
+        
+        
+        
         var input = $("input[name='" + key + "']");
-        var offsets = $("input[name='" + key + "']").offset();
-        offsets.top  += $("input[name='" + key + "']").height() + 40;             
+        
+        if(!input.length) {
+            // ON append l'erreur dans le code de ValidForm.
+            input = $("#orphan-errors");
+        }
+        
+        
+        
+        var offsets = input.offset();
+        offsets.top  += input.height() + 40;             
 
                                 
         var clone = $("#erreurtest-template").clone();
                                
-        clone.find('.erreur_text').html(validationErrors[key]);
-                                
-        $("input[name='" + key + "']").after(clone.html());
+        clone.find('.erreur_text').html(validationErrors[key]); 
+        
+        
+        input.after(clone.html());
+
                                 
                              
         clone.css({'left': 100});                        
