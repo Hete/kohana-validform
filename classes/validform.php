@@ -40,7 +40,19 @@ class ValidForm {
      * @return String 
      */
     public function retreive_errors() {
-        return json_encode($this->_errors ? $this->_errors->errors(":model") : array());
+
+        $error_output = array();
+        if ($this->_errors) {
+            foreach ($this->_errors->errors(":model") as $key => $value) {
+                $error_output[$key] = __($value);
+            }
+            return json_encode($error_output);
+        }
+
+
+
+
+        return json_encode(array());
     }
 
 }
