@@ -17,7 +17,25 @@ class ValidForm {
     }
 
     private $_errors;
+    private $_success_message;
 
+    /**
+     * Get or set the form success message.
+     * @param type $message
+     * @return type
+     */
+    public function success_message($message = NULL) {
+        if ($message === NULL) {
+            return $this->_success_message;
+        } else {
+            $this->_success_message = $message;
+        }
+    }
+
+    /**
+     * 
+     * @return type
+     */
     public function render() {
         return View::factory('validform/validform')->render();
     }
@@ -35,8 +53,21 @@ class ValidForm {
         }
     }
 
+    public function has_errors() {
+        return count($this->_errors) > 0;
+    }
+
     /**
-     *
+     * @todo Description
+     * @return type
+     */
+    public function to_json() {
+
+        return $this->retreive_errors();
+    }
+
+    /**
+     * @deprecated use to_json.
      * @return String 
      */
     public function retreive_errors() {
