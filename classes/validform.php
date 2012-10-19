@@ -73,9 +73,13 @@ class ValidForm {
     public function retreive_errors() {
 
         $error_output = array();
+
         if ($this->_errors) {
             foreach ($this->_errors->errors(":model") as $key => $value) {
-                $error_output[$key] = __($value);
+                if (is_string($value)) {
+
+                    $error_output[$key] = __($value);
+                }
             }
             return json_encode($error_output);
         }
