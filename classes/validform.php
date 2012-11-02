@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Utility to validate forms and show notifications.
+ */
 class ValidForm {
 
     private static $_instance;
@@ -12,45 +15,54 @@ class ValidForm {
         return ValidForm::$_instance ? ValidForm::$_instance : ValidForm::$_instance = new ValidForm();
     }
 
+    private $_errors;
+    private $_notifications = array();
+
     private function __construct() {
         
     }
 
-    private $_errors;
-    private $_success_message;
-
     /**
-     * Get or set the form success message.
+     * 
      * @param type $message
-     * @return type
+     * @param type $type alert, error,
      */
-    public function success_message($message = NULL) {
-        if ($message === NULL) {
-            return $this->_success_message;
+    public function notifications($notification = NULL, $type = "error") {
+
+        if ($notification === NULL) {
+            // Act as a getter
+            return $this->_notifications;
+        }
+
+        if ($notification instanceof ORM_Validation_Exception) {
+            // Will show in separated bubbles
         } else {
-            $this->_success_message = $message;
+            $this->_notifications[] = new ValidForm_Notification($notification, $type);
         }
     }
 
-    /**
-     * 
-     * @return type
-     */
-    public function render() {
-        return View::factory('validform/validform')->render();
+    public function errors($errors = NULL) {
+
+        if ($errors === NULL) {
+            // ACT AS A GETTER
+            return $this->_errors;
+        }
+
+        if ($this->_errors !== NULL) {
+            $this->_errors->merge("", $errors);
+        } else {
+            $this->_errors = $errors;
+        }
     }
 
     /**
      *
      * @param ORM_Validation_Exception $errors 
+     * @deprecated, user errors instead,
      */
-    public function push_errors($errors) {
-        if ($this->_errors) {
-            $this->_errors->merge("", $errors);
-        } else {
+    public function push_errors($errors = NULL) {
 
-            $this->_errors = $errors;
-        }
+        return $this->errors($errors);
     }
 
     public function has_errors() {
@@ -63,7 +75,16 @@ class ValidForm {
      */
     public function to_json() {
 
-        return $this->retreive_errors();
+        $error_output = array();
+
+        if ($this->_errors) {
+            foreach ($this->_errors->errors(":model") as $key => $value) {
+                $error_output[$key] = __($value);
+            }
+            return json_encode($error_output);
+        }
+
+        return json_encode(array());
     }
 
     /**
@@ -72,18 +93,7 @@ class ValidForm {
      */
     public function retreive_errors() {
 
-        $error_output = array();
-        if ($this->_errors) {
-            foreach ($this->_errors->errors(":model") as $key => $value) {
-                $error_output[$key] = __($value);
-            }
-            return json_encode($error_output);
-        }
-
-
-
-
-        return json_encode(array());
+        return $this->to_json();
     }
 
 }
