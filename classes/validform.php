@@ -15,6 +15,10 @@ class ValidForm {
         return ValidForm::$_instance ? ValidForm::$_instance : ValidForm::$_instance = new ValidForm();
     }
 
+    /**
+     *
+     * @var ORM_Validation_Exception 
+     */
     private $_errors;
     private $_notifications = array();
 
@@ -49,7 +53,7 @@ class ValidForm {
         }
 
         if ($this->_errors !== NULL) {
-            $this->_errors->merge("", $errors);
+            $this->_errors->merge($errors);
         } else {
             $this->_errors = $errors;
         }
@@ -79,7 +83,9 @@ class ValidForm {
 
         if ($this->_errors) {
             foreach ($this->_errors->errors(":model") as $key => $value) {
-                $error_output[$key] = __($value);
+                if (is_string($value)) {
+                    $error_output[$key] = __($value);
+                }
             }
             return json_encode($error_output);
         }
