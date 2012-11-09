@@ -22,30 +22,28 @@ class ValidForm {
     private $_errors;
     private $_notifications = array();
 
-    private function __construct() {
-        
-    }
-
     /**
-     * 
+     * Gère les notifications.
      * @param type $message
-     * @param type $type alert, error,
+     * @param array $variables replacement variables
+     * @param type $type alert, error, info, warning
      */
-    public function notifications($notification = NULL, $type = "error") {
+    public function notifications($notification = NULL, array $variables = NULL, $type = "") {
 
         if ($notification === NULL) {
             // Act as a getter
             return $this->_notifications;
         }
 
-        if ($notification instanceof ORM_Validation_Exception) {
-            // Will show in separated bubbles
-        } else {
-            $this->_notifications[] = new ValidForm_Notification($notification, $type);
-        }
+        $this->_notifications[] = new ValidForm_Notification($notification, $variables, $type);
     }
 
-    public function errors($errors = NULL) {
+    /**
+     * Gère les erreurs de formulaire.
+     * @param ORM_Validation_Exception $errors
+     * @return type
+     */
+    public function errors(ORM_Validation_Exception $errors = NULL) {
 
         if ($errors === NULL) {
             // ACT AS A GETTER
@@ -55,6 +53,7 @@ class ValidForm {
         if ($this->_errors !== NULL) {
             $this->_errors->merge($errors);
         } else {
+            $this->notifications("Les données envoyées sont invalides.", NULL, "error");
             $this->_errors = $errors;
         }
     }
@@ -64,7 +63,7 @@ class ValidForm {
      * @param ORM_Validation_Exception $errors 
      * @deprecated, user errors instead,
      */
-    public function push_errors($errors = NULL) {
+    public function push_errors(ORM_Validation_Exception $errors = NULL) {
 
         return $this->errors($errors);
     }

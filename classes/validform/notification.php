@@ -4,9 +4,15 @@ class ValidForm_Notification {
 
     public $type, $message;
 
-    public function __construct($message, $type ) {
+    /**
+     * 
+     * @param type $message
+     * @param array $variables
+     * @param type $type Par défaut, les notifications sont de type 
+     */
+    public function __construct($message, array $variables = NULL, $type = "") {
         $this->type = $type;
-        $this->message = $message;
+        $this->message = __($message, $variables);
     }
 
 }
