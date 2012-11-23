@@ -50,8 +50,10 @@
                             
     for(key in validationErrors) {
         
+        $("input[name='" + key + "']").parents("control-group").addClass("error");
         
         
+        continue;
         var input = $("input[name='" + key + "']");
         
         if(!input.length) {
