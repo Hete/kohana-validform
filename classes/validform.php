@@ -17,10 +17,14 @@ class ValidForm {
 
     /**
      *
-     * @var ORM_Validation_Exception 
+     * @var Validation 
      */
     private $_errors;
     private $_notifications = array();
+
+    private function __construct() {
+        $this->_errors = Validation::factory(array());
+    }
 
     /**
      * Gère les notifications.
@@ -32,7 +36,17 @@ class ValidForm {
 
         if ($notification === NULL) {
             // Act as a getter
-            return $this->_notifications;
+            
+            $notifications = $this->_notifications;
+
+            if (count($this->_errors->errors()) > 0) {
+                $error_text = implode(", ", Arr::flatten($this->_errors->errors()));
+
+                $notifications[] = new ValidForm_Notification("Les erreurs suivantes sont survenues :errors", array(":errors" => $error_text), "error");
+            }
+
+
+            return $notifications;
         }
 
         $this->_notifications[] = new ValidForm_Notification($notification, $variables, $type);
@@ -43,7 +57,7 @@ class ValidForm {
      * @param ORM_Validation_Exception $errors
      * @return type
      */
-    public function errors(ORM_Validation_Exception $errors = NULL) {
+    public function errors($errors = NULL) {
 
         if ($errors === NULL) {
             // ACT AS A GETTER
@@ -51,7 +65,17 @@ class ValidForm {
         }
 
         if ($this->_errors !== NULL) {
-            $this->_errors->merge($errors);
+            if ($errors instanceof ORM_Validation_Exception) {
+                foreach ($errors->errors(":model") as $field => $error) {
+                    $this->_errors->error($field, $error);
+                }
+            } elseif ($errors instanceof Validation) {
+                foreach ($errors->errors() as $field => $error) {
+                    $this->_errors->error($field, $error);
+                }
+            } else {
+                throw new Kohana_Exception("Errors supplied must be instance of ORM_Validation_Exception or Validation.");
+            }
         } else {
             $this->notifications("Les données envoyées sont invalides.", NULL, "error");
             $this->_errors = $errors;
@@ -81,7 +105,7 @@ class ValidForm {
         $error_output = array();
 
         if ($this->_errors) {
-            foreach ($this->_errors->errors(":model") as $key => $value) {
+            foreach ($this->_errors->errors() as $key => $value) {
                 if (is_string($value)) {
                     $error_output[$key] = __($value);
                 }
