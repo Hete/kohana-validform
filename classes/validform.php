@@ -17,13 +17,13 @@ class ValidForm {
 
     /**
      *
-     * @var Validation 
+     * @var Validation_Exception
      */
-    private $_errors;
+    private $_errors = array();
     private $_notifications = array();
 
     private function __construct() {
-        $this->_errors = Validation::factory(array());
+        
     }
 
     /**
@@ -36,13 +36,16 @@ class ValidForm {
 
         if ($notification === NULL) {
             // Act as a getter
-            
+
             $notifications = $this->_notifications;
+            if (count($this->_errors) > 0) {
+                $messages = array();
 
-            if (count($this->_errors->errors()) > 0) {
-                $error_text = implode(", ", Arr::flatten($this->_errors->errors()));
+                foreach ($this->_errors as $errors) {
 
-                $notifications[] = new ValidForm_Notification("Les erreurs suivantes sont survenues :errors", array(":errors" => $error_text), "error");
+                    $messages[] = implode(", ", $errors);
+                }
+                $notifications[] = new ValidForm_Notification("Les erreurs suivantes sont survenues :errors", array(":errors" => implode("; ", $messages)), "error");
             }
 
 
@@ -64,21 +67,32 @@ class ValidForm {
             return $this->_errors;
         }
 
-        if ($this->_errors !== NULL) {
-            if ($errors instanceof ORM_Validation_Exception) {
-                foreach ($errors->errors(":model") as $field => $error) {
-                    $this->_errors->error($field, $error);
+        
+
+
+
+        if ($errors instanceof ORM_Validation_Exception) {
+            foreach ($errors->errors(":model") as $field => $errors) {
+                if (Arr::is_array($errors)) {
+                    foreach ($errors as $error) {
+                        $this->_errors[$field][] = __($error);
+                    }
+                } else {
+                    $this->_errors[$field][] = __($errors);
                 }
-            } elseif ($errors instanceof Validation) {
-                foreach ($errors->errors() as $field => $error) {
-                    $this->_errors->error($field, $error);
+            }
+        } elseif ($errors instanceof Validation) {
+            foreach ($errors->errors() as $field => $errors) {
+                if (Arr::is_array($errors)) {
+                    foreach ($errors as $error) {
+                        $this->_errors[$field][] = __($error);
+                    }
+                } else {
+                    $this->_errors[$field][] = __($errors);
                 }
-            } else {
-                throw new Kohana_Exception("Errors supplied must be instance of ORM_Validation_Exception or Validation.");
             }
         } else {
-            $this->notifications("Les données envoyées sont invalides.", NULL, "error");
-            $this->_errors = $errors;
+            throw new Kohana_Exception("Errors supplied must be instance of ORM_Validation_Exception or Validation.");
         }
     }
 
@@ -101,19 +115,7 @@ class ValidForm {
      * @return type
      */
     public function to_json() {
-
-        $error_output = array();
-
-        if ($this->_errors) {
-            foreach ($this->_errors->errors() as $key => $value) {
-                if (is_string($value)) {
-                    $error_output[$key] = __($value);
-                }
-            }
-            return json_encode($error_output);
-        }
-
-        return json_encode(array());
+        return json_encode($this->_errors);
     }
 
     /**
