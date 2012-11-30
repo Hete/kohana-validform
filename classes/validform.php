@@ -67,10 +67,6 @@ class ValidForm {
             return $this->_errors;
         }
 
-        
-
-
-
         if ($errors instanceof ORM_Validation_Exception) {
             foreach ($errors->errors(":model") as $field => $errors) {
                 if (Arr::is_array($errors)) {
@@ -85,9 +81,11 @@ class ValidForm {
             foreach ($errors->errors() as $field => $errors) {
                 if (Arr::is_array($errors)) {
                     foreach ($errors as $error) {
-                        $this->_errors[$field][] = __($error);
+                        if (is_string($error)) {
+                            $this->_errors[$field][] = __($error);
+                        }
                     }
-                } else {
+                } elseif (is_string($error)) {
                     $this->_errors[$field][] = __($errors);
                 }
             }
