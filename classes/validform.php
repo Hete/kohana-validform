@@ -39,14 +39,13 @@ class ValidForm {
 
             $notifications = $this->_notifications;
             if (count($this->_errors) > 0) {
-                $messages = array();
 
-                foreach ($this->_errors as $errors) {
 
-                    $messages[] = implode(", ", $errors);
-                }
-                $notifications[] = new ValidForm_Notification("Les erreurs suivantes sont survenues :errors", array(":errors" => implode("; ", $messages)), "error");
+                $message = View::factory("validform/notification/errors", array("errors" => $this->_errors))->render();
+
+                $notifications[] = new ValidForm_Notification($message, NULL, "error");
             }
+
 
 
             return $notifications;
