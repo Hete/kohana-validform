@@ -54,6 +54,32 @@ class ValidForm {
         $this->_notifications[] = new ValidForm_Notification($notification, $variables, $type);
     }
 
+    private function add_orm_validation_exception_errors(ORM_Validation_Exception $ove) {
+        foreach ($ove->errors(":model") as $field => $errors) {
+            if (Arr::is_array($errors)) {
+                foreach ($errors as $error) {
+                    $this->_errors[$field][] = __($error);
+                }
+            } else {
+                $this->_errors[$field][] = __($errors);
+            }
+        }
+    }
+
+    private function add_validation_errors(Validation $validation) {
+        foreach ($validation->errors() as $field => $errors) {
+            if (Arr::is_array($errors)) {
+                foreach ($errors as $error) {
+                    if (is_string($error)) {
+                        $this->_errors[$field][] = __($error);
+                    }
+                }
+            } elseif (is_string($error)) {
+                $this->_errors[$field][] = __($errors);
+            }
+        }
+    }
+
     /**
      * Gère les erreurs de formulaire.
      * @param ORM_Validation_Exception $errors
@@ -67,27 +93,11 @@ class ValidForm {
         }
 
         if ($errors instanceof ORM_Validation_Exception) {
-            foreach ($errors->errors(":model") as $field => $errors) {
-                if (Arr::is_array($errors)) {
-                    foreach ($errors as $error) {
-                        $this->_errors[$field][] = __($error);
-                    }
-                } else {
-                    $this->_errors[$field][] = __($errors);
-                }
-            }
+            $this->add_orm_validation_exception_errors($errors);
         } elseif ($errors instanceof Validation) {
-            foreach ($errors->errors() as $field => $errors) {
-                if (Arr::is_array($errors)) {
-                    foreach ($errors as $error) {
-                        if (is_string($error)) {
-                            $this->_errors[$field][] = __($error);
-                        }
-                    }
-                } elseif (is_string($error)) {
-                    $this->_errors[$field][] = __($errors);
-                }
-            }
+            $this->add_validation_errors($errors);
+        } elseif ($errors instanceof Validation_Exception) {
+            $this->add_validation_errors($errors->array);
         } else {
             throw new Kohana_Exception("Errors supplied must be instance of ORM_Validation_Exception or Validation.");
         }
