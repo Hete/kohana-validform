@@ -1,5 +1,7 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
 /**
  * Notification.
  * 
@@ -7,26 +9,16 @@
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  * @copyright (c) 2012, Hète.ca Inc.
  */
-class Kohana_Notification implements Consumeable {
+class Kohana_Notifications_Notification extends Notifications_Message {
 
     public static function factory($message, array $variables = NULL, $type = NULL) {
-        return new Notification($message, $variables, $type);
+        return new Notifications_Notification($message, $variables, $type);
     }
-
-    private $_consumed = FALSE;
 
     public function __construct($message, array $variables = NULL, $type = NULL) {
         $this->message = $message;
         $this->variables = $variables;
         $this->type = $type;
-    }
-
-    public function consume() {
-        $this->_consumed = TRUE;
-    }
-
-    public function consumed() {
-        return $this->_consumed;
     }
 
 }

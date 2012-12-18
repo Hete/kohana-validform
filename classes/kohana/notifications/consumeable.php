@@ -1,6 +1,8 @@
 <?php
 
-interface Kohana_Consumeable {
+defined('SYSPATH') or die('No direct script access.');
+
+interface Kohana_Notifications_Consumeable {
 
     /**
      * Mark the object as consumed

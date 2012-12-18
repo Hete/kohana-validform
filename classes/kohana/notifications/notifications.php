@@ -1,9 +1,14 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
 /**
- * Utility to validate forms and show notifications.
+ * Notification manager.
+ * 
+ * @package Notifications
+ * @author Guillaume Poirier-Morency <john.doe@example.com>
  */
-class Kohana_Notifications {
+class Kohana_Notifications_Notifications {
 
     /**
      *
@@ -20,13 +25,13 @@ class Kohana_Notifications {
     }
 
     /**
-     *
+     * Array of Errors objects.
      * @var array
      */
     private $_errors = array();
 
     /**
-     *
+     * Array of Notification objects.
      * @var array 
      */
     private $_notifications = array();
@@ -37,52 +42,69 @@ class Kohana_Notifications {
     private function __construct() {
 
         // Reload errors and notifications from session
-        $this->reload_cache();
+        $this->reload_data();
     }
 
     /**
-     * Add notification
+     * Add notification.
+     * @param Notifications_Notification $message
+     * @param array $variables
+     * @param type $type
+     * @return \Kohana_Message_Iterator|\Kohana_Notifications_Notifications
+     * @throws Kohana_Exception
      */
-    public function notifications($notification = NULL, array $variables = NULL, $type = NULL) {
+    public function notifications($message = NULL, array $variables = NULL, $type = NULL) {
 
-        $this->reload_data();
+        $this->update_data();
 
-        if ($notification === NULL) {
+        if ($message === NULL) {
 
             // ACT AS A GETTER
-            return new ArrayIterator($this->_notifications);
+            return new Notifications_Message_Iterator($this->_notifications);
         }
 
-        if ($notification instanceof Notification) {
-            $this->_notifications[] = $notification;
-        } elseif (is_string($notification)) {
-            $this->_notifications[] = Notification::factory($notification, $variables, $type);
+        if ($message instanceof Notifications_Notification) {
+            $this->_notifications[] = $message;
+        } elseif (is_string($message)) {
+            $this->_notifications[] = Notifications_Notification::factory($message, $variables, $type);
         } else {
             throw new Kohana_Exception("Notification supplied must be instance of Notification or be a string.");
         }
 
         $this->update_cache();
+
+        return $this;
     }
 
     /**
-     * Add error
-     * @param Error $error
+     * Add an error on a field.
+     * @param Error $error can be an Error object, a ORM_Validation_Exception, 
+     * a Validation_Exception or a field. If a field is specified, a message must
+     * be providen. Otherwise a Kohana_Exception will be thrown.
+     * @param type $message is the error message if $error is a field.
+     * @param array $variables is the variables related to the message.
+     * @param type $type is the error type.
+     * @return \Kohana_Message_Iterator|\Kohana_Notifications_Notifications
+     * @throws Kohana_Exception if a field is supplied but no message is related
+     * to it.
      */
-    public function errors($error = NULL) {
+    public function errors($error = NULL, $message = NULL, array $variables = NULL, $type = NULL) {
 
-        $this->reload_data();
+        $this->update_data();
 
         if ($error === NULL) {
             // ACT AS A GETTER
-            return new ArrayIterator($this->_errors);
+            return new Notifications_Message_Iterator($this->_errors);
         }
 
-        if ($error instanceof Error) {
+        if ($error instanceof Notifications_Error) {
             $this->_errors[] = $error;
         } elseif ($error instanceof ORM_Validation_Exception) {
             $this->add_orm_validation_exception_errors($error);
         } elseif ($error instanceof Validation_Exception) {
             $this->add_validation_exception_errors($error->array);
+        } elseif ($message !== NULL) {
+            $this->_errors[] = Notifications_Error::factory($error, $message, $variables, $type);
         } else {
             throw new Kohana_Exception("Errors supplied must be instance of ORM_Validation_Exception or Validation.");
         }
@@ -94,9 +116,9 @@ class Kohana_Notifications {
 
     /**
      * Remove consumed items.
-     * @return \Kohana_Notifications
+     * @return \Kohana_Notifications_Notifications
      */
-    private function reload_data() {
+    public function update_data() {
         foreach ($this->_errors as $key => $error) {
             if ($error->consumed()) {
                 unset($this->_errors[$key]);
@@ -111,20 +133,24 @@ class Kohana_Notifications {
     }
 
     /**
-     * Reload data from cache
+     * Reload data from cache.
      * @return \Kohana_Notifications
      */
-    private function reload_cache() {
+    private function reload_data() {
+        $this->update_data();
         $this->_errors = Session::instance()->get("errors", array());
         $this->_notifications = Session::instance()->get("notifications", array());
         return $this;
     }
 
     /**
-     * 
+     * Update the session data with current notifications.
      */
     private function update_cache() {
-        Session::instance()->set("errors", $this->_notifications);
+        // First remove consumed items
+        $this->update_data();
+        // Then update the cache
+        Session::instance()->set("errors", $this->_errors);
         Session::instance()->set("notifications", $this->_notifications);
         return $this;
     }
@@ -137,12 +163,13 @@ class Kohana_Notifications {
         foreach ($ove->errors(":model") as $field => $errors) {
             if (Arr::is_array($errors)) {
                 foreach ($errors as $error) {
-                    $this->_errors[] = Error::factory($field, $error);
+                    $this->_errors[] = Notifications_Error::factory($field, $error);
                 }
             } else {
-                $this->_errors[] = Error::factory($field, $errors);
+                $this->_errors[] = Notifications_Error::factory($field, $errors);
             }
         }
+        return $this;
     }
 
     /**
@@ -154,13 +181,14 @@ class Kohana_Notifications {
             if (Arr::is_array($errors)) {
                 foreach ($errors as $error) {
                     if (is_string($error)) {
-                        $this->_errors[] = Error::factory($field, $error);
+                        $this->_errors[] = Notifications_Error::factory($field, $error);
                     }
                 }
             } elseif (is_string($error)) {
-                $this->_errors[] = Error::factory($field, $error);
+                $this->_errors[] = Notifications_Error::factory($field, $error);
             }
         }
+        return $this;
     }
 
     /**

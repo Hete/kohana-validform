@@ -1,9 +1,12 @@
 <?php
 
-return array();
+defined('SYSPATH') or die('No direct script access.');
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+return array(
+    "notifications.error" => ":message pour le champ :field",
+    "validform.formisinvalid" => "Le formulaire est invalide",
+    "validform.errorforfield" => ":message pour le champ :field",
+);
+
+
 ?>
