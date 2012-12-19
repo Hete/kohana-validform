@@ -21,6 +21,14 @@ class Kohana_Notifications_Message_Iterator extends ArrayIterator {
         return $this;
     }
 
+    /**
+     * Return a json encoded version of this iterator.
+     * @return string
+     */
+    public function to_json() {
+        return json_encode($this);
+    }
+
 }
 
 ?>

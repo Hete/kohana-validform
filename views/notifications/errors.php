@@ -2,28 +2,69 @@
 <script type="text/javascript">
 
     var Errors = {
-        errors: <?php echo Notifications::instance()->errors_to_json() ?>,
+        errors: <?php echo Notifications::instance()->errors()->consume_all()->to_json() ?>,
         init: function() {
-            for (key in this.errors) {
+            
+            // Build a field => error array
+            
+            var fields = {};
+            
+            for(key in Errors.errors) {
+                var error = Errors.errors[key];  
 
-                var error = this.errors[key];
+                if(fields[error.field] === undefined) {
+                    fields[error.field] = [];
+                }
 
-                var field = $("#" + error.field);
-
-                field.parents(".control-group").addClass("error");
-
-
+                fields[error.field].push(error.message);
+                
+            }
+            
+            for(key in fields) {
+                
+                var errorsForField = fields[key];                
+                var field =  $("#" + key);                
+                var message = "";
+                
+                for(errorKey in errorsForField) {
+                    message += errorsForField[errorKey];
+                }        
+                
+                
+                // Red stuff
+                field.parents(".control-group").first().addClass("error");
+                
+                // Popover
                 field.popover({
                     html: true,
                     trigger: 'hover',
-                    content: error.message
+                    content: message
                 }).popover('show');
+                
+                
 
+                $("#" + error.field)
+                
+                
+                
+                
+            }
+            
+            
+            
+            for (key in Errors.errors) {              
+                
+                
+                var error = Errors.errors[key];                  
+                
+                
+                // In all cases we add error
+                field.parents(".control-group").first().addClass("error");              
+                
+                // Now we check if a popover is already visible
 
 
             }
-
-
         }
 
     };

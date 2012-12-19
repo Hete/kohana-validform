@@ -109,7 +109,7 @@ class Kohana_Notifications_Notifications {
             throw new Kohana_Exception("Errors supplied must be instance of ORM_Validation_Exception or Validation.");
         }
 
-        $this->update_cache();
+        $this->update_cache();        
 
         return $this;
     }
@@ -216,11 +216,11 @@ class Kohana_Notifications_Notifications {
     }
 
     /**
-     * @todo Description
+     * 
      * @return sting
      */
     public function errors_to_json() {
-        return json_encode($this->notifications());
+        return json_encode($this->errors());
     }
 
 }
