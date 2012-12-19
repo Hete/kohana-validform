@@ -6,3 +6,8 @@
     <?php $notification->consume() ?>
 
 <?php endforeach; ?>
+
+<?php if (Notifications::instance()->has_errors() && Kohana::$environment !== Kohana::PRODUCTION): ?>
+    <?php echo View::factory("notifications/message", array("message" => Notifications_Notification::factory(print_r(Notifications::instance()->errors(), TRUE), NULL, "error"))); ?>
+<?php endif; ?>
+
