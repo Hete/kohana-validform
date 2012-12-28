@@ -37,7 +37,7 @@
                 // Popover
                 field.popover({
                     html: true,
-                    trigger: 'hover',
+                    title: message,
                     content: message
                 }).popover('show');
                 
