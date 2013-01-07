@@ -32,40 +32,17 @@
                 
                 
                 // Red stuff
-                field.parents(".control-group").first().addClass("error");
-                
-                // Popover
-                field.popover({
-                    html: true,
-                    title: message,
-                    content: message
-                }).popover('show');
-                
-                
-
-                $("#" + error.field)
+                field.parents(".control-group")
+                .first()
+                .addClass("error")
+                .append('<span class="help-inline">' + message + '</span>');               
                 
                 
                 
-                
-            }
-            
-            
-            
-            for (key in Errors.errors) {              
-                
-                
-                var error = Errors.errors[key];                  
-                
-                
-                // In all cases we add error
-                field.parents(".control-group").first().addClass("error");              
-                
-                // Now we check if a popover is already visible
-
-
-            }
+            }            
         }
+            
+          
 
     };
 
