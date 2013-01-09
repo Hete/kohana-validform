@@ -102,14 +102,14 @@ class Kohana_Notifications_Notifications {
         } elseif ($error instanceof ORM_Validation_Exception) {
             $this->add_orm_validation_exception_errors($error);
         } elseif ($error instanceof Validation_Exception) {
-            $this->add_validation_exception_errors($error->array);
+            $this->add_validation_exception_errors($error);
         } elseif ($message !== NULL) {
             $this->_errors[] = Notifications_Error::factory($error, $message, $variables, $type);
         } else {
             throw new Kohana_Exception("Errors supplied must be instance of ORM_Validation_Exception or Validation.");
         }
 
-        $this->update_cache();        
+        $this->update_cache();
 
         return $this;
     }
@@ -177,7 +177,7 @@ class Kohana_Notifications_Notifications {
      * @param Validation $validation
      */
     private function add_validation_exception_errors(Validation_Exception $validation) {
-        foreach ($validation->errors() as $field => $errors) {
+        foreach ($validation->array as $field => $errors) {
             if (Arr::is_array($errors)) {
                 foreach ($errors as $error) {
                     if (is_string($error)) {
