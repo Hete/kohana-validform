@@ -29,14 +29,6 @@ class Kohana_Notifications_Error extends Notifications_Message {
         $this->type = $type;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function __toString() {
-        return __("notifications.error", array(":field" => $this->field, ":message" => parent::__toString()));
-    }
-
 }
 
 ?>

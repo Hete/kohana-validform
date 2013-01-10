@@ -160,7 +160,7 @@ class Kohana_Notifications_Notifications {
      * @param ORM_Validation_Exception $ove
      */
     private function add_orm_validation_exception_errors(ORM_Validation_Exception $ove) {
-        foreach ($ove->errors(":model") as $field => $errors) {
+        foreach ($ove->errors("model") as $field => $errors) {
             if (Arr::is_array($errors)) {
                 foreach ($errors as $error) {
                     $this->_errors[] = Notifications_Error::factory($field, $error);
@@ -177,7 +177,7 @@ class Kohana_Notifications_Notifications {
      * @param Validation $validation
      */
     private function add_validation_exception_errors(Validation_Exception $validation) {
-        foreach ($validation->array as $field => $errors) {
+        foreach ($validation->array->errors("valid") as $field => $errors) {
             if (Arr::is_array($errors)) {
                 foreach ($errors as $error) {
                     if (is_string($error)) {
