@@ -22,11 +22,9 @@ class Kohana_Notifications_Error extends Notifications_Message {
      * @param array $variables
      * @param string $type
      */
-    public function __construct($field, $message, array $variables = NULL, $type = "error") {
+    public function __construct($field, $message, array $variables = NULL, $type = "error", $persistent = TRUE) {
+        parent::__construct($message, $variables, $type, $persistent);
         $this->field = $field;
-        $this->message = $message;
-        $this->variables = $variables;
-        $this->type = $type;
     }
 
 }

@@ -15,7 +15,7 @@ abstract class Kohana_Notifications_Message implements Notifications_Consumeable
     const ALERT = "alert",
             WARNING = "warning";
 
-    public $message, $variables, $type;
+    public $message, $variables, $type, $persistent;
 
     /**
      * Boolean determining wether the message is consumed or not.
@@ -23,6 +23,21 @@ abstract class Kohana_Notifications_Message implements Notifications_Consumeable
      * @var boolean 
      */
     private $_consumed = FALSE;
+
+    /**
+     * 
+     * @param string $message message
+     * @param array $variables substitution variable for message
+     * @param string $type type of notification
+     * @param boolean $persistent if true, the notification will persist after
+     * this request.
+     */
+    public function __construct($message, array $variables = NULL, $type = NULL, $persistent = TRUE) {
+        $this->message = $message;
+        $this->variables = $variables;
+        $this->type = $type;
+        $this->persistent = $persistent;
+    }
 
     /**
      * Consume the message. Regex is optional.

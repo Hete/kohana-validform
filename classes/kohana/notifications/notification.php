@@ -15,12 +15,6 @@ class Kohana_Notifications_Notification extends Notifications_Message {
         return new Notifications_Notification($message, $variables, $type);
     }
 
-    public function __construct($message, array $variables = NULL, $type = NULL) {
-        $this->message = $message;
-        $this->variables = $variables;
-        $this->type = $type;
-    }
-
 }
 
 ?>
