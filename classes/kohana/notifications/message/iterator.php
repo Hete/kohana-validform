@@ -22,10 +22,12 @@ class Kohana_Notifications_Message_Iterator extends ArrayIterator {
         foreach ($this as $message) {
             $message->consume($regex);
         }
+        
         // Update consumed items in the Singleton
         Notifications::instance()->update_data();
         return $this;
-    }
+    }   
+    
 
     /**
      * Return a json encoded version of this iterator.

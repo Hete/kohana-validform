@@ -24,9 +24,12 @@ class Kohana_Notifications_Error extends Notifications_Message {
      */
     public function __construct($field, $message, array $variables = NULL, $type = "error") {
         $this->field = $field;
-        $this->message = $message;
-        $this->variables = $variables;
+        $this->message = UTF8::ucfirst(__($message, $variables)) . ".";
         $this->type = $type;
+    }
+
+    public function __toString() {
+        return ucfirst(parent::__toString()) . ".";
     }
 
 }

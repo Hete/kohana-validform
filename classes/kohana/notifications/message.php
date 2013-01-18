@@ -15,7 +15,7 @@ abstract class Kohana_Notifications_Message implements Notifications_Consumeable
     const ALERT = "alert",
             WARNING = "warning";
 
-    public $message, $variables, $type;
+    public $message, $type;
 
     /**
      * Boolean determining wether the message is consumed or not.
@@ -47,7 +47,7 @@ abstract class Kohana_Notifications_Message implements Notifications_Consumeable
      * @return string
      */
     public function __toString() {
-        return __($this->message, $this->variables);
+        return $this->message;
     }
 
 }
