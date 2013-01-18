@@ -3,12 +3,18 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
+ * Error for field.
  * 
  * @package Notifications
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @copyright (c) 2013, Hète.ca Inc.
  */
 class Kohana_Notifications_Error extends Notifications_Message {
 
+    /**
+     * Field name.
+     * @var string 
+     */
     public $field;
 
     public static function factory($field, $message, array $variables = NULL, $type = "error") {
@@ -27,11 +33,6 @@ class Kohana_Notifications_Error extends Notifications_Message {
         $this->message = UTF8::ucfirst(__($message, $variables)) . ".";
         $this->type = $type;
     }
-
-    public function __toString() {
-        return ucfirst(parent::__toString()) . ".";
-    }
-
 }
 
 ?>

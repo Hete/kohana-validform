@@ -2,6 +2,9 @@
 
 defined('SYSPATH') or die('No direct script access.');
 
+/**
+ * Interface for consumeable items.
+ */
 interface Kohana_Notifications_Consumeable {
 
     /**
@@ -9,6 +12,9 @@ interface Kohana_Notifications_Consumeable {
      */
     public function consume();
 
+    /**
+     * Tells if the message is consumed.
+     */
     public function consumed();
 }
 
