@@ -7,9 +7,6 @@
 
 <?php endforeach; ?>
 
-<?php foreach (Notifications::instance()->errors() as $error): ?>
-    <?php echo View::factory("notifications/message", array("message" => $error)) ?>
-<?php endforeach; ?>
 
 
 
