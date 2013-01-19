@@ -162,8 +162,8 @@ class Kohana_Notifications_Notifications {
     private function add_orm_validation_exception_errors(ORM_Validation_Exception $ove) {
         foreach ($ove->errors("model") as $field => $errors) {
             if (Arr::is_array($errors)) {
-                foreach ($errors as $error) {
-                    $this->_errors[] = Notifications_Error::factory($field, $error);
+                foreach ($errors as $sub_field => $error) {
+                    $this->_errors[] = Notifications_Error::factory($sub_field, $error);
                 }
             } else {
                 $this->_errors[] = Notifications_Error::factory($field, $errors);
@@ -179,9 +179,9 @@ class Kohana_Notifications_Notifications {
     private function add_validation_exception_errors(Validation_Exception $validation) {
         foreach ($validation->array->errors("valid") as $field => $errors) {
             if (Arr::is_array($errors)) {
-                foreach ($errors as $error) {
+                foreach ($errors as $sub_field => $error) {
                     if (is_string($error)) {
-                        $this->_errors[] = Notifications_Error::factory($field, $error);
+                        $this->_errors[] = Notifications_Error::factory($sub_field, $error);
                     }
                 }
             } elseif (is_string($error)) {
