@@ -103,6 +103,8 @@ class Kohana_Notifications_Notifications {
             $this->add_orm_validation_exception_errors($error);
         } elseif ($error instanceof Validation_Exception) {
             $this->add_validation_exception_errors($error);
+        } elseif ($error instanceof Validation) {
+            $this->add_validation_errors($error);
         } elseif ($message !== NULL) {
             $this->_errors[] = Notifications_Error::factory($error, $message, $variables, $type);
         } else {
@@ -177,15 +179,19 @@ class Kohana_Notifications_Notifications {
      * @param Validation $validation
      */
     private function add_validation_exception_errors(Validation_Exception $validation) {
-        foreach ($validation->array->errors("valid") as $field => $errors) {
+        return $this->add_validation_errors($validation->array);
+    }
+
+    private function add_validation_errors(Validation $validation) {
+        foreach ($validation->errors("valid") as $field => $errors) {
             if (Arr::is_array($errors)) {
                 foreach ($errors as $sub_field => $error) {
                     if (is_string($error)) {
                         $this->_errors[] = Notifications_Error::factory($sub_field, $error);
                     }
                 }
-            } elseif (is_string($error)) {
-                $this->_errors[] = Notifications_Error::factory($field, $error);
+            } elseif (is_string($errors)) {
+                $this->_errors[] = Notifications_Error::factory($field, $errors);
             }
         }
         return $this;
