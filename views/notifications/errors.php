@@ -35,12 +35,16 @@
                 field.parents(".control-group")
                 .first()
                 .addClass("error")
-                .append('<span class="help-inline">' + message + '</span>');               
+                .append('<span class="help-inline">' + message + '</span>');
+                
+                // Remove the red when the field is blured
+                field.blur(function() {$(this).parents(".control-group").first().removeClass("error");});               
                 
                 
-                
-            }            
-        }
+            }
+
+
+        }   
             
           
 
