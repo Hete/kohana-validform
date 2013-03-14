@@ -88,7 +88,7 @@ class Kohana_Notifications_Notifications {
      * @throws Kohana_Exception if a field is supplied but no message is related
      * to it.
      */
-    public function errors($error = NULL, $message = NULL, array $variables = NULL, $type = NULL) {
+    public function errors($error = NULL, $alias = NULL) {
 
         $this->update_data();
 
@@ -100,13 +100,11 @@ class Kohana_Notifications_Notifications {
         if ($error instanceof Notifications_Error) {
             $this->_errors[] = $error;
         } elseif ($error instanceof ORM_Validation_Exception) {
-            $this->add_orm_validation_exception_errors($error);
+            $this->add_orm_validation_exception_errors($error, $alias);
         } elseif ($error instanceof Validation_Exception) {
-            $this->add_validation_exception_errors($error);
+            $this->add_validation_exception_errors($error, $alias);
         } elseif ($error instanceof Validation) {
-            $this->add_validation_errors($error);
-        } elseif ($message !== NULL) {
-            $this->_errors[] = Notifications_Error::factory($error, $message, $variables, $type);
+            $this->add_validation_errors($error, $alias);
         } else {
             throw new Kohana_Exception("Errors supplied must be instance of ORM_Validation_Exception or Validation.");
         }
@@ -161,14 +159,19 @@ class Kohana_Notifications_Notifications {
      * 
      * @param ORM_Validation_Exception $ove
      */
-    private function add_orm_validation_exception_errors(ORM_Validation_Exception $ove) {
+    private function add_orm_validation_exception_errors(ORM_Validation_Exception $ove, $alias = NULL) {
+
+        if ($alias === NULL) {
+            $alias = $ove->alias();
+        }
+
         foreach ($ove->errors("model") as $field => $errors) {
             if (Arr::is_array($errors)) {
                 foreach ($errors as $sub_field => $error) {
-                    $this->_errors[] = Notifications_Error::factory($sub_field, $error);
+                    $this->_errors[] = Notifications_Error::factory($alias . "[$field]" . "[$sub_field]", $error);
                 }
             } else {
-                $this->_errors[] = Notifications_Error::factory($field, $errors);
+                $this->_errors[] = Notifications_Error::factory($alias . "[$field]", $errors);
             }
         }
         return $this;
@@ -178,16 +181,22 @@ class Kohana_Notifications_Notifications {
      * 
      * @param Validation $validation
      */
-    private function add_validation_exception_errors(Validation_Exception $validation) {
+    private function add_validation_exception_errors(Validation_Exception $validation, $alias = NULL) {
         return $this->add_validation_errors($validation->array);
     }
 
-    private function add_validation_errors(Validation $validation) {
+    /**
+     * 
+     * @param Validation $validation
+     * @param type $alias
+     * @return \Kohana_Notifications_Notifications
+     */
+    private function add_validation_errors(Validation $validation, $alias = NULL) {
         foreach ($validation->errors("valid") as $field => $errors) {
             if (Arr::is_array($errors)) {
                 foreach ($errors as $sub_field => $error) {
                     if (is_string($error)) {
-                        $this->_errors[] = Notifications_Error::factory($sub_field, $error);
+                        $this->_errors[] = Notifications_Error::factory($field . "[$sub_field]", $error);
                     }
                 }
             } elseif (is_string($errors)) {
