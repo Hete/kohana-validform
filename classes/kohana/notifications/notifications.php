@@ -105,6 +105,8 @@ class Kohana_Notifications_Notifications {
             $this->add_validation_exception_errors($error, $alias);
         } elseif ($error instanceof Validation) {
             $this->add_validation_errors($error, $alias);
+        } elseif(Arr::is_array($error)) {
+            $this->add_array_errors($error, $alias);
         } else {
             throw new Kohana_Exception("Errors supplied must be instance of ORM_Validation_Exception or Validation.");
         }
@@ -168,7 +170,7 @@ class Kohana_Notifications_Notifications {
         foreach ($ove->errors("model") as $field => $errors) {
             if (Arr::is_array($errors)) {
                 foreach ($errors as $sub_field => $error) {
-                    $this->_errors[] = Notifications_Error::factory($alias . "[$field]" . "[$sub_field]", $error);
+                    $this->_errors[] = Notifications_Error::factory($alias . "[$sub_field]", $error);
                 }
             } else {
                 $this->_errors[] = Notifications_Error::factory($alias . "[$field]", $errors);
@@ -196,14 +198,28 @@ class Kohana_Notifications_Notifications {
             if (Arr::is_array($errors)) {
                 foreach ($errors as $sub_field => $error) {
                     if (is_string($error)) {
-                        $this->_errors[] = Notifications_Error::factory($field . "[$sub_field]", $error);
+                        $this->_errors[] = Notifications_Error::factory($alias . "[$sub_field]", $error);
                     }
                 }
             } elseif (is_string($errors)) {
-                $this->_errors[] = Notifications_Error::factory($field, $errors);
+                $this->_errors[] = Notifications_Error::factory($alias . "[$field]", $errors);
             }
         }
         return $this;
+    }
+
+    private function add_array_errors(array $validation, $alias = NULL) {
+        foreach ($validation as $field => $errors) {
+            if (Arr::is_array($errors)) {
+                foreach ($errors as $sub_field => $error) {
+                    if (is_string($error)) {
+                        $this->_errors[] = Notifications_Error::factory($alias . "[$sub_field]", $error);
+                    }
+                }
+            } elseif (is_string($errors)) {
+                $this->_errors[] = Notifications_Error::factory($alias . "[$field]", $errors);
+            }
+        }
     }
 
     /**
