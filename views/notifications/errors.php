@@ -23,7 +23,12 @@
             for (key in fields) {
 
                 var errorsForField = fields[key];
-                var field = $("[name='" + key + "']");
+
+                var keyWithoutSubfield = key.replace(/\[\w+\]/, ""); // Any [] containing words and their content
+
+                alert(keyWithoutSubfield);
+
+                var field = $("[name='" + key + "'], [name='" + keyWithoutSubfield + "']").first();
                 var message = "";
 
                 for (errorKey in errorsForField) {
