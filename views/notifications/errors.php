@@ -26,15 +26,12 @@
 
                 var keyWithoutSubfield = key.replace(/\[\w+\]/, ""); // Any [] containing words and their content
 
-                alert(keyWithoutSubfield);
-
                 var field = $("[name='" + key + "'], [name='" + keyWithoutSubfield + "']").first();
                 var message = "";
 
                 for (errorKey in errorsForField) {
-                    message += errorsForField[errorKey];
+                    message += errorsForField[errorKey] + " ";
                 }
-
 
                 // Red stuff
                 field.parents(".control-group")
@@ -46,18 +43,10 @@
                 field.blur(function() {
                     $(this).parents(".control-group").first().removeClass("error");
                 });
-
-
             }
-
-
         }
-
-
-
     };
 
     $(document).ready(Errors.init);
-
 
 </script>
