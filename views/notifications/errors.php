@@ -26,7 +26,7 @@
 
                 var keyWithoutSubfield = key.replace(/\[\w+\]/, ""); // Any [] containing words and their content
 
-                var field = $("[name='" + key + "'], [name='" + keyWithoutSubfield + "']").first();
+                var field = jQuery("[name='" + key + "'], [name='" + keyWithoutSubfield + "']").first();
                 var message = "";
 
                 for (errorKey in errorsForField) {
@@ -41,12 +41,12 @@
 
                 // Remove the red when the field is blured
                 field.blur(function() {
-                    $(this).parents(".control-group").first().removeClass("error");
+                    jQuery(this).parents(".control-group").first().removeClass("error");
                 });
             }
         }
     };
 
-    $(document).ready(Errors.init);
+    jQuery(document).ready(Errors.init);
 
 </script>
