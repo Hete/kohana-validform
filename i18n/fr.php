@@ -6,6 +6,11 @@ return array(
     "notifications.error" => ":message pour le champ :field",
     "validform.formisinvalid" => "Le formulaire est invalide",
     "validform.errorforfield" => "Erreurs pour :field",
+    // Fields
+    'field.email' => 'courriel',
+    'field.name' => 'nom',
+    'field.phone' => 'téléphone',
+    'field.zip_code' => 'code postal',
     // Validation
     'validation.alpha' => ':field doit contenir uniquement des lettres',
     'validation.alpha_dash' => ':field doit contenir uniquement des lettres, des chiffres et des dash',
