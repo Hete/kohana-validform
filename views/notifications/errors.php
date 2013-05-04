@@ -47,6 +47,6 @@
         }
     };
 
-    jQuery(document).ready(Errors.init);
+    Errors.init();
 
 </script>
