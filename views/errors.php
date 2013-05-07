@@ -2,7 +2,7 @@
 <script type="text/javascript">
 
     var Errors = {
-        errors: <?php echo Notifications::instance()->errors()->consume_all()->to_json() ?>,
+        errors: <?php echo json_encode(Notification::instance()->errors()) ?>,
         init: function() {
 
             // Build a field => error array
