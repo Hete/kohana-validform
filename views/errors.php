@@ -1,52 +1,43 @@
 <?php defined('SYSPATH') or die('No direct script access.'); ?>
+
+<?php echo HTML::script("http://code.jquery.com/jquery.min.js") ?>
+
 <script type="text/javascript">
+
+    jQuery.noConflict();
 
     var Errors = {
         errors: <?php echo json_encode(Notification::instance()->errors()) ?>,
         init: function() {
-
-            // Build a field => error array
-
-            var fields = {};
-
             for (key in Errors.errors) {
-                var error = Errors.errors[key];
 
-                if (fields[error.field] === undefined) {
-                    fields[error.field] = [];
+                var errors = Errors.errors[key];
+
+                if (!jQuery.isArray(errors)) {
+                    errors = [errors];
                 }
 
-                fields[error.field].push(error.message);
-
-            }
-
-            for (key in fields) {
-
-                var errorsForField = fields[key];
-
-                var keyWithoutSubfield = key.replace(/\[\w+\]/, ""); // Any [] containing words and their content
-
-                var field = jQuery("[name='" + key + "'], [name='" + keyWithoutSubfield + "']").first();
-                var message = "";
-
-                for (errorKey in errorsForField) {
-                    message += errorsForField[errorKey] + " ";
-                }
-
-                // Red stuff
-                field.parents(".control-group")
+                // Any [] containing words and their content
+                var controlGroup = jQuery("[name$='[" + key + "]']")
+                        .add("[name$='[" + key.replace(/\[\w+\]/, "") + "]']")
+                        .addClass("lol")
+                        .blur(Errors.removeError) // Remove error on blur
+                        .parents(".control-group")
                         .first()
-                        .addClass("error")
-                        .append('<span class="help-inline">' + message + '</span>');
+                        .addClass("error");
 
-                // Remove the red when the field is blured
-                field.blur(function() {
-                    jQuery(this).parents(".control-group").first().removeClass("error");
+                jQuery.each(errors, function(key, value) {
+                    // value is a message, key is an index it must be capitalized          
+                    controlGroup.append('<span class="help-inline">' + value.charAt(0).toUpperCase() + value.slice(1) + '</span>');
                 });
             }
+        },
+        removeError: function() {
+            jQuery(this).parents(".control-group").first().removeClass("error");
         }
+
     };
 
-    Errors.init();
+    jQuery(document).ready(Errors.init);
 
 </script>

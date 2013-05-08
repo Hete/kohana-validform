@@ -11,7 +11,10 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Kohana_Notification {
 
-    const INFO = "info", WARNING = "warning", ERROR = "error", SUCCESS = "success";
+    const INFO = "info",
+            WARNING = "warning",
+            ERROR = "error",
+            SUCCESS = "success";
 
     /**
      * Default writer.
@@ -28,7 +31,8 @@ class Kohana_Notification {
     protected static $_instance;
 
     /**
-     *
+     * Singleton.
+     * 
      * @return Notification
      */
     public static function instance() {
@@ -46,25 +50,25 @@ class Kohana_Notification {
 
     /**
      * Array of Errors objects.
+     * 
      * @var array
      */
     private $_errors = array();
 
     /**
      * Array of Notification objects.
+     * 
      * @var array 
      */
     private $_notifications = array();
 
     /**
-     *
+     * Writer.
+     * 
      * @var \Notification_Writer 
      */
     private $writer;
 
-    /**
-     * 
-     */
     private function __construct() {
 
         $writer = "Notification_" . static::$default_writer;
@@ -81,7 +85,7 @@ class Kohana_Notification {
      * @param type $values
      * @param type $level
      */
-    public function add($message = NULL, $values = NULL, $level = Notifications::INFO) {
+    public function add($level, $message, $values = NULL) {
         $this->_notifications[] = array(
             "message" => $message,
             "values" => $values,
@@ -102,10 +106,16 @@ class Kohana_Notification {
 
     /**
      * Add errors.
+     *
+     * Errors can be:
+     * <ul>
+     *     <li>ORM_Validation_Exception</li>
+     *     <li>Validation_Exception</li>
+     *     <li>Validation</li>
+     * </ul>
      * 
-     * @param Error $errors can be an Error object, a ORM_Validation_Exception, 
-     * a Validation_Exception or a field. If a field is specified, a message must
-     * be providen. Otherwise a Kohana_Exception will be thrown.
+     * @param Error $errors can be of type ORM_Validation_Exception,
+     * Validation_Exception or Validation or a valid $
      */
     public function errors($errors = NULL) {
 
@@ -116,26 +126,24 @@ class Kohana_Notification {
         }
 
         if ($errors instanceof ORM_Validation_Exception) {
-            $errors = Arr::flatten($errors->errors(Kohana::$config->load("notifications.orm_directory")));
+            $errors = Arr::flatten($errors->errors(Kohana::$config->load("notification.orm_directory")));
         }
 
         if ($errors instanceof Validation) {
-            $errors = Arr::flatten($errors->errors(Kohana::$config->load("notifications.validation_file")));
+            $errors = Arr::flatten($errors->errors(Kohana::$config->load("notification.validation_file")));
         }
 
         if ($errors instanceof Validation_Exception) {
-            $errors = Arr::flatten($errors->array->errors(Kohana::$config->load("notifications.validation_file")));
+            $errors = Arr::flatten($errors->array->errors(Kohana::$config->load("notification.validation_file")));
         }
+        
+        // Merge or assign
+        $this->_errors = $this->_errors ? Arr::merge($this->_errors, $errors) : $errors;
 
-        // At this point, we assume $errors is an array
-
-        $this->_errors = Arr::merge($this->_errors, $errors);
     }
 
     /**
-     * Read data from session.
-     * 
-     * @return type
+     * Read data from session and use them internally.
      */
     public function read() {
         list($this->_notifications, $this->_errors) = $this->writer->read();

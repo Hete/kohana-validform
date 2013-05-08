@@ -1,24 +1,31 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
 /**
- * Description of session
+ * Cache writer for notifications and errors.
  *
  * @package Notification
  * @category Writers
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @copyright 2013, Hète.ca Inc.
  */
 class Notification_Cache extends Notification_Writer {
 
     public function read() {
+
+        $notifications = Kohana::cache("notifications");
+        $errors = Kohana::cache("errors");
+
         return array(
-            Cache::instance()->get("notifications", array()),
-            Cache::instance()->get("errors", array())
+            $notifications ? $notifications : array(),
+            $errors ? $errors : array(),
         );
     }
 
     public function write(array $notifications, array $errors) {
-        Cache::instance()->set("errors", $errors);
-        Cache::instance()->set("notifications", $notifications);
+        Kohana::cache("errors", $errors);
+        Kohana::cache("notifications", $notifications);
     }
 
 //put your code here

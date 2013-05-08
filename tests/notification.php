@@ -3,9 +3,9 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Tests for Notifications module.
+ * Tests for Notification module.
  * 
- * @package Notifications
+ * @package Notification
  * @category Tests
  * @author Guillaume Poirier-Morency <john.doe@example.com>
  * @copyright (c) 2012, Hète.ca Inc.
@@ -14,6 +14,7 @@ class Notification_Test extends Unittest_TestCase {
 
     public function setUp() {
         parent::setUp();
+        Notification::$default_writer = "Cache";
         Notification::instance()->notifications();
     }
 
@@ -30,11 +31,6 @@ class Notification_Test extends Unittest_TestCase {
         $this->assertCount(1, Notification::instance()->notifications());
     }
 
-    public function test_remove_notification() {
-
-        Notification::instance()->add("crap :toto", array(":toto" => "crap"), "alert");
-    }
-
     /**
      * Test for adding errors
      */
@@ -42,20 +38,17 @@ class Notification_Test extends Unittest_TestCase {
 
         $this->assertCount(0, Notification::instance()->errors());
 
-        $validation = Validation::factory(array("foo" => "bar", "bar" => "foo"))
-                ->rule("foo", "equals", array(":value", "bar"))
-                ->rule("bar", "not_empty");
+        $validation = Validation::factory(array("foo" => "sdsd@foo.com"))
+                ->rule("foo", "not_empty")
+                ->rule("foo", "email")
+                ->rule("foo", "equals", array(":value", "sds"));
 
         $validation->check();
 
         Notification::instance()->errors($validation);
 
-        Notification::instance()->errors("field", "crap :toto", array(":toto" => "crap"), "alert");
+        $this->assertArrayHasKey("foo", Notification::instance()->errors());
 
-        // There should be only one element
-        $this->assertCount(1, Notification::instance()->errors());
-
-        // Element should have been wiped from being read
         $this->assertCount(0, Notification::instance()->errors());
     }
 
