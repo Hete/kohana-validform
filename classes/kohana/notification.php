@@ -136,10 +136,9 @@ class Kohana_Notification {
         if ($errors instanceof Validation_Exception) {
             $errors = Arr::flatten($errors->array->errors(Kohana::$config->load("notification.validation_file")));
         }
-        
+
         // Merge or assign
         $this->_errors = $this->_errors ? Arr::merge($this->_errors, $errors) : $errors;
-
     }
 
     /**
