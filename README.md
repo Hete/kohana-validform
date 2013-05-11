@@ -1,9 +1,16 @@
-What is ValidForm ?
+# Notification handler for Kohana framework
 
-ValidForm is a Kohana module designed to provide client-side errors with server-side validation errors. It is based on JQuery to associate errors with field and print corresponding errors.
+This is a notification handler. It is similar to a logger, but designed for
+users.
 
-The main advantage is not to have to create two sets of validation and increase the system security as every validation are done on the server, so bad behaviors are easier to detect.
+    Notification::instance()->add(Notification::SUCCESS, "You have succeed!.");
 
-## Latest developments
-- A full notification system based on Bootstrap alerts
-- Compatible with Kohana messages
+There is also an validation error handler.
+
+    Notification::instance()->errors($validation_exception);
+
+## Usage
+
+Add the view "notifications" anywhere in your code. Add the view "errors" at the
+bottom of your template. The latest has js code to bind errors with field in a
+Bootstrap way.
