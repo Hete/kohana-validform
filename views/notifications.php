@@ -2,9 +2,9 @@
 
 <?php foreach (Notification::instance()->notifications() as $notification): ?>
 
-    <div class="alert alert-<?php echo $notification["level"] ?>">
+    <div <?php echo HTML::attributes(array('class' => "alert alert-{$notification["level"]}")) ?>>
         <?php echo __($notification["message"], $notification["values"]) ?>
-        <button type="button" class="close" data-dismiss="alert">×</button>
+        <?php echo Form::button('', '×', array('class' => 'close', 'data-dismiss' => 'alert')) ?>
     </div>
 
 <?php endforeach; ?>

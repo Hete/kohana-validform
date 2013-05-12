@@ -1,7 +1,9 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
 /**
- * Description of session
+ * Cookie writer for notifications and errors.
  *
  * @package Notification
  * @category Writers
