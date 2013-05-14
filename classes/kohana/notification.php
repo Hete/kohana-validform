@@ -5,23 +5,23 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * Notification manager.
  * 
- * @package Notifications
+ * @package Notification
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  * @copyright (c) 2012, Hète.ca Inc.
  */
 class Kohana_Notification {
 
-    const INFO = "info",
-            WARNING = "warning",
-            ERROR = "error",
-            SUCCESS = "success";
+    const INFO = 'info',
+            WARNING = 'warning',
+            ERROR = 'error',
+            SUCCESS = 'success';
 
     /**
      * Default writer.
      * 
      * @var string 
      */
-    public static $default_writer = "Session";
+    public static $default_writer = 'Session';
 
     /**
      * Singleton.
@@ -71,7 +71,7 @@ class Kohana_Notification {
 
     private function __construct() {
 
-        $writer = "Notification_" . static::$default_writer;
+        $writer = 'Notification_' . static::$default_writer;
 
         $this->writer = new $writer();
 
@@ -81,15 +81,17 @@ class Kohana_Notification {
     /**
      * Add a notification.
      * 
-     * @param type $message
-     * @param type $values
-     * @param type $level
+     * @see Log::add
+     *
+     * @param string $level
+     * @param string $message
+     * @param array $values
      */
-    public function add($level, $message, $values = NULL) {
+    public function add($level, $message, array $values = NULL) {
         $this->_notifications[] = array(
-            "message" => $message,
-            "values" => $values,
-            "level" => $level,
+            'message' => $message,
+            'values' => $values,
+            'level' => $level,
         );
     }
 
@@ -126,15 +128,15 @@ class Kohana_Notification {
         }
 
         if ($errors instanceof ORM_Validation_Exception) {
-            $errors = Arr::flatten($errors->errors(Kohana::$config->load("notification.orm_directory")));
+            $errors = Arr::flatten($errors->errors(Kohana::$config->load('notification.orm_directory')));
         }
 
         if ($errors instanceof Validation) {
-            $errors = Arr::flatten($errors->errors(Kohana::$config->load("notification.validation_file")));
+            $errors = Arr::flatten($errors->errors(Kohana::$config->load('notification.validation_file')));
         }
 
         if ($errors instanceof Validation_Exception) {
-            $errors = Arr::flatten($errors->array->errors(Kohana::$config->load("notification.validation_file")));
+            $errors = Arr::flatten($errors->array->errors(Kohana::$config->load('notification.validation_file')));
         }
 
         // Merge or assign
