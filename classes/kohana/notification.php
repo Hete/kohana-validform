@@ -42,7 +42,7 @@ class Kohana_Notification {
             static::$_instance = new Notification();
 
             // Write on shutdown
-            register_shutdown_function(array(static::$_instance, "write"));
+            register_shutdown_function(array(Notification::$_instance, "write"));
         }
 
         return static::$_instance;
