@@ -13,13 +13,9 @@ defined('SYSPATH') or die('No direct script access.');
 class Notification_Cache extends Notification_Writer {
 
     public function read() {
-
-        $notifications = Kohana::cache("notifications");
-        $errors = Kohana::cache("errors");
-
         return array(
-            $notifications ? $notifications : array(),
-            $errors ? $errors : array(),
+            (array) Kohana::cache("notifications"),
+            (array) Kohana::cache("errors")
         );
     }
 

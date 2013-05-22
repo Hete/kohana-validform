@@ -13,8 +13,8 @@ class Notification_Session extends Notification_Writer {
 
     public function read() {
         return array(
-            Session::instance()->get("notifications", array()),
-            Session::instance()->get("errors", array())
+            (array) Session::instance()->get("notifications", array()),
+            (array) Session::instance()->get("errors", array())
         );
     }
 

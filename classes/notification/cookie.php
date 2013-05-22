@@ -13,8 +13,8 @@ class Notification_Cookie extends Notification_Writer {
 
     public function read() {
         return array(
-            unserialize(Cookie::get("notifications", serialize(array()))),
-            unserialize(Cookie::get("errors", serialize(array())))
+            (array) unserialize(Cookie::get("notifications", serialize(array()))),
+            (array) unserialize(Cookie::get("errors", serialize(array())))
         );
     }
 
