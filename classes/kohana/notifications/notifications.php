@@ -21,7 +21,16 @@ class Kohana_Notifications_Notifications {
      * @return Notifications 
      */
     public static function instance() {
-        return Notifications::$_instance ? Notifications::$_instance : Notifications::$_instance = new Notifications();
+
+        if (Notifications::$_instance !== NULL) {
+            return Notifications::$_instance;
+        }
+
+        Notifications::$_instance = new Notifications();
+
+        register_shutdown_function(array(Notifications::$_instance, 'write'));
+
+        return Notifications::$_instance;
     }
 
     /**
@@ -42,11 +51,7 @@ class Kohana_Notifications_Notifications {
     private function __construct() {
 
         // Reload errors and notifications from session
-        $this->reload_data();
-    }
-
-    private function __destruct() {
-        $this->update_cache();
+        $this->read();
     }
 
     /**
@@ -75,7 +80,7 @@ class Kohana_Notifications_Notifications {
             throw new Kohana_Exception("Notification supplied must be instance of Notification or be a string.");
         }
 
-        $this->update_cache();
+        $this->write();
 
         return $this;
     }
@@ -115,7 +120,7 @@ class Kohana_Notifications_Notifications {
             throw new Kohana_Exception("Errors supplied must be instance of ORM_Validation_Exception or Validation.");
         }
 
-        $this->update_cache();
+        $this->write();
 
         return $this;
     }
@@ -142,7 +147,7 @@ class Kohana_Notifications_Notifications {
      * Reload data from cache.
      * @return \Kohana_Notifications
      */
-    private function reload_data() {
+    public function read() {
         $this->update_data();
         $this->_errors = Session::instance()->get("errors", array());
         $this->_notifications = Session::instance()->get("notifications", array());
@@ -152,7 +157,7 @@ class Kohana_Notifications_Notifications {
     /**
      * Update the session data with current notifications.
      */
-    private function update_cache() {
+    public function write() {
         // First remove consumed items
         $this->update_data();
         // Then update the cache
