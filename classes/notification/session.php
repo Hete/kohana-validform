@@ -13,14 +13,15 @@ class Notification_Session extends Notification_Writer {
 
     public function read() {
         return array(
-            (array) Session::instance()->get("notifications", array()),
-            (array) Session::instance()->get("errors", array())
+            (array) Session::instance()->get('notifications'),
+            (array) Session::instance()->get('errors')
         );
     }
 
     public function write(array $notifications, array $errors) {
-        Session::instance()->set("errors", $errors);
-        Session::instance()->set("notifications", $notifications);
+        Session::instance()->set('errors', (array) $errors);
+        Session::instance()->set('notifications', (array) $notifications);
+        Session::instance()->write();
     }
 
 }

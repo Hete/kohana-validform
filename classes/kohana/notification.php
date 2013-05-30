@@ -24,6 +24,13 @@ class Kohana_Notification {
     public static $default_writer = 'Session';
 
     /**
+     * Write on add.
+     * 
+     * @var boolean 
+     */
+    public static $write_on_add = TRUE;
+
+    /**
      * Singleton.
      * 
      * @var Notification
@@ -42,7 +49,7 @@ class Kohana_Notification {
             static::$_instance = new Notification();
 
             // Write on shutdown
-            register_shutdown_function(array(Notification::$_instance, "write"));
+            register_shutdown_function(array(Notification::$_instance, 'write'));
         }
 
         return static::$_instance;
@@ -93,6 +100,10 @@ class Kohana_Notification {
             'values' => $values,
             'level' => $level,
         );
+
+        if (static::$write_on_add === TRUE) {
+            $this->write();
+        }
     }
 
     /**
@@ -101,8 +112,13 @@ class Kohana_Notification {
      * @return array
      */
     public function notifications() {
+
         $_notifications = $this->_notifications;
         $this->_notifications = array();
+
+        // Update persistency
+        $this->write();
+
         return $_notifications;
     }
 
@@ -124,6 +140,10 @@ class Kohana_Notification {
         if ($errors === NULL) {
             $_errors = $this->_errors;
             $this->_errors = array();
+
+            // Update persistency
+            $this->write();
+
             return $_errors;
         }
 
@@ -141,6 +161,10 @@ class Kohana_Notification {
 
         // Merge or assign
         $this->_errors = $this->_errors ? Arr::merge($this->_errors, $errors) : $errors;
+
+        if (static::$write_on_add === TRUE) {
+            $this->write();
+        }
     }
 
     /**
