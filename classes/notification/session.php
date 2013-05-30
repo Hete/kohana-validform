@@ -19,9 +19,12 @@ class Notification_Session extends Notification_Writer {
     }
 
     public function write(array $notifications, array $errors) {
+
         Session::instance()->set('errors', (array) $errors);
         Session::instance()->set('notifications', (array) $notifications);
-        Session::instance()->write();
+
+        // Reload session
+        Session::instance()->write() AND Session::instance()->read();
     }
 
 }
