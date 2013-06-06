@@ -18,14 +18,17 @@
                 }
 
                 // Any [] containing words and their content
-                jQuery("[name$='[" + key + "]']").add("[name$='[" + key.replace(/\[\w+\]/, "") + "]']").each(function() {
+                jQuery("[name$='[" + key + "]']")
+                        .add("[name$='[" + key.replace(/\[\w+\]/, "") + "]']")
+                        .add("[name='" + key + "']")
+                        .each(function() {
                     var controlGroup = jQuery(this).blur(Errors.removeError) // Remove error on blur
                             .parents(".control-group")
                             .first()
                             .addClass("error");
                     jQuery.each(errors, function(key, value) {
                         // value is a message, key is an index it must be capitalized          
-                        controlGroup.append('<span class="help-inline">' + value.charAt(0).toUpperCase() + value.slice(1) + '</span>');
+                        controlGroup.append('<span class="help-inline">' + value.charAt(0).toUpperCase() + value.slice(1) + '.</span>');
                     });
                 });
 
