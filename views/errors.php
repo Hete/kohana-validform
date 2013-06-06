@@ -19,7 +19,7 @@
 
                 // Any [] containing words and their content
                 jQuery("[name$='[" + key + "]']").add("[name$='[" + key.replace(/\[\w+\]/, "") + "]']").each(function() {
-                    var controlGroup = $(this).blur(Errors.removeError) // Remove error on blur
+                    var controlGroup = jQuery(this).blur(Errors.removeError) // Remove error on blur
                             .parents(".control-group")
                             .first()
                             .addClass("error");
