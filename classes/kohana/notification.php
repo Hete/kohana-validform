@@ -135,7 +135,7 @@ class Kohana_Notification {
      * @param Error $errors can be of type ORM_Validation_Exception,
      * Validation_Exception or Validation or a valid $
      */
-    public function errors($errors = NULL) {
+    public function errors($errors = NULL, $prefix = NULL) {
 
         if ($errors === NULL) {
             $_errors = $this->_errors;
@@ -159,8 +159,16 @@ class Kohana_Notification {
             $errors = Arr::flatten($errors->array->errors(Kohana::$config->load('notification.validation_file')));
         }
 
+        if ($prefix) {
+            foreach ($errors as $key => $value) {
+                unset($errors[$key]);
+                $key = $prefix . "[$key]";
+                $errors[$key] = $value;
+            }
+        }
+
         // Merge or assign
-        $this->_errors = $this->_errors ? Arr::merge($this->_errors, $errors) : $errors;
+        $this->_errors = Arr::merge($this->_errors, $errors);
 
         if (static::$write_on_add === TRUE) {
             $this->write();
