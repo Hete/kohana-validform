@@ -148,6 +148,7 @@ class Kohana_Notification {
         }
 
         if ($errors instanceof ORM_Validation_Exception) {
+            $prefix = $prefix === NULL ? $errors->alias() : $prefix;
             $errors = Arr::flatten($errors->errors(Kohana::$config->load('notification.orm_directory')));
         }
 
