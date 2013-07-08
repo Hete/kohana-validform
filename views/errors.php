@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.'); ?>
 
-<?php echo HTML::script("http://code.jquery.com/jquery.min.js") ?>
+<script src="//code.jquery.com/jquery.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 
