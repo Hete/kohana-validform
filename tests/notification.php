@@ -61,5 +61,3 @@ class Notification_Test extends Unittest_TestCase {
     }
 
 }
-
-?>

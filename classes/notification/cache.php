@@ -26,5 +26,3 @@ class Notification_Cache extends Notification_Writer {
 
 //put your code here
 }
-
-?>

@@ -26,5 +26,3 @@ abstract class Notification_Writer {
      */
     public abstract function write(array $notifications, array $errors);
 }
-
-?>

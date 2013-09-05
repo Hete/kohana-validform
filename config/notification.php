@@ -6,4 +6,3 @@ return array(
     'orm_directory' => 'model',
     'validation_file' => 'validation',
 );
-?>

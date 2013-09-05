@@ -25,5 +25,3 @@ class Notification_Cookie extends Notification_Writer {
 
 //put your code here
 }
-
-?>

@@ -33,4 +33,3 @@ return array(
     'validation.regex' => ':field does not match the required format',
     'validation.url' => ':field must be a url',
 );
-?>

@@ -28,5 +28,3 @@ class Notification_Session extends Notification_Writer {
     }
 
 }
-
-?>
